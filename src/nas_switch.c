@@ -36,6 +36,7 @@ static bool failed = false;
 
 static nas_switches_t switches;
 static size_t num_switches = 0;
+static int MAX_DIR_SIZE = 256;
 
 static nas_switch_detail_t *switch_cfg;
 
@@ -110,9 +111,17 @@ void _fn_switch_parser(std_config_node_t node, void *user_data) {
 }
 
 t_std_error nas_switch_init(void) {
+  char str[MAX_DIR_SIZE];
 
     switch_cfg_path = std_getenv("DN_SWITCH_CFG");
-    if (switch_cfg_path==NULL) switch_cfg_path =NAS_SWITCH_CFG_DEFAULT_PATH;
+    if (switch_cfg_path==NULL) {
+        if (getenv("OPX_INSTALL_PATH")) {
+          snprintf(str, MAX_DIR_SIZE, "%s%s", getenv("OPX_INSTALL_PATH"), NAS_SWITCH_CFG_DEFAULT_PATH);
+          switch_cfg_path = str;
+        }
+        else
+            switch_cfg_path = NAS_SWITCH_CFG_DEFAULT_PATH;
+    }
 
     std_config_hdl_t h = std_config_load(switch_cfg_path);
     if (h==NULL) return STD_ERR(HALCOM,FAIL,0);
