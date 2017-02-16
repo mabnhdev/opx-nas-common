@@ -39,9 +39,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#define HAL_SHELL_CMD_SOCK  "/var/run/ar.npu.shell"
 
 int main(int argc, char**argv) {
-    char * path = "/var/run/ar.npu.shell";
+    char path[256];
 
     int opt = -1;
     char unit_str[30]="";
@@ -49,6 +50,10 @@ int main(int argc, char**argv) {
     char *exit_cmd="\n::exit\n";
     char *prompt_off="\n::prompt:off\n";
     char *prompt_on="\n::prompt:on\n";
+
+    snprintf(path, sizeof(path), "%s%s",
+             getenv("OPX_DATA_PATH") ? getenv("OPX_DATA_PATH") : "",
+             HAL_SHELL_CMD_SOCK);
 
     while ((opt=getopt(argc,argv,"u:c:"))!=-1) {
         switch(opt) {

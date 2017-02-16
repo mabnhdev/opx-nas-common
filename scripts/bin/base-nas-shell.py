@@ -19,6 +19,7 @@ import socket
 import select
 import sys
 import time
+import os
 
 
 def _flush(sock):
@@ -47,7 +48,7 @@ def run_shell_cmd(cmd):
     s = ""
     try:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect('/var/run/ar.npu.shell')
+        sock.connect('{}/var/run/ar.npu.shell'.format(os.environ.get('OPX_DATA_PATH','')))
 
         prompt = ''
         retry = 5
