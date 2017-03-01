@@ -58,6 +58,7 @@ typedef struct {
 typedef struct {
     size_t number_of_npus;
     npu_id_t * npus;
+    char * hardware_id;
 } nas_switch_detail_t ;
 
 /**

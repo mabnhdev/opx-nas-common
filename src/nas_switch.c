@@ -91,7 +91,12 @@ void _fn_switch_parser(std_config_node_t node, void *user_data) {
     if (strcmp(name,"switch")==0) {
         const char * id = std_config_attr_get(node,"id");
         const char * npus = std_config_attr_get(node,"npus");
+#ifdef ORIGINAL_DELL_CODE
         if (id==NULL || npus==NULL) {
+#else
+        const char * hardware_id = std_config_attr_get(node,"hardware_id");
+        if (id==NULL || npus==NULL || hardware_id==NULL) {
+#endif
             EV_LOGGING(NAS_COM, ERR, "SWITCH","Invalid switch config. Exiting... fix %s",switch_cfg_path);
             return;
         }
@@ -103,6 +108,10 @@ void _fn_switch_parser(std_config_node_t node, void *user_data) {
         }
         switch_cfg[switch_ix].npus = (npu_id_t*)int_array_from_string(npus,&switch_cfg[switch_ix].number_of_npus);
         if (switch_cfg[switch_ix].npus==NULL) failed = true;
+#ifndef ORIGINAL_DELL_CODE
+        switch_cfg[switch_ix].hardware_id = malloc(strlen(hardware_id)+1);
+        strcpy(switch_cfg[switch_ix].hardware_id, hardware_id);
+#endif
 
         num_switches += switch_cfg[switch_ix].number_of_npus;
 
